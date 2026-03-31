@@ -109,7 +109,7 @@ export default function Analyze({ user, profile }) {
 
   return (
     <main className="analyze-page page-container" role="main">
-      <h1 className="page-title">Analyse a meal</h1>
+      <h1 className="page-title editorial-title">Scan or Describe</h1>
 
       {!result && !loading && (
         <section className="analyze-form" aria-label="Food analysis form">
@@ -127,7 +127,7 @@ export default function Analyze({ user, profile }) {
             ))}
           </div>
 
-          <div className="upload-zone" 
+          <div className="upload-zone viewfinder" 
                onClick={() => fileRef.current?.click()}
                onKeyDown={(e) => e.key === 'Enter' && fileRef.current?.click()}
                tabIndex={0}
@@ -138,8 +138,8 @@ export default function Analyze({ user, profile }) {
             ) : (
               <div className="upload-placeholder" aria-hidden="true">
                 <span className="upload-icon">◎</span>
-                <span>Upload a food photo</span>
-                <span className="upload-sub">or type below</span>
+                <span className="upload-main-text">Capture Nutritional Intelligence</span>
+                <span className="upload-sub">Tap to scan your meal</span>
               </div>
             )}
           </div>

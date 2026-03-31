@@ -1,53 +1,53 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 :root {
-  /* The Void & Neon Palette (Spotify/Apple Health inspired) */
-  --color-primary: #34C759; /* Apple Green */
-  --color-primary-light: #5CE07A;
-  --color-primary-dark: #248A3D;
-  --color-primary-dim: rgba(52, 199, 89, 0.15);
+  /* THE VOID & BIOLUMINESCENT PALETTE (Obsidian Vitality) */
+  --color-primary: #a9fca0; /* Neon Mint Growth */
+  --color-primary-light: #c2ffbc;
+  --color-primary-dark: #63b25f;
+  --color-primary-dim: rgba(169, 252, 160, 0.15);
   
-  --color-background: #000000; /* Pure Black Void */
-  --color-surface: #121212; /* Spotify Dark Grey Surface */
-  --color-surface-elevated: rgba(255, 255, 255, 0.06); /* Frosted Glass Layer */
-  --color-surface-highlight: rgba(255, 255, 255, 0.1);
+  --color-background: #08100a; /* Obsidian Void */
+  --color-surface: #08100a;
+  --color-surface-container: #121c14; /* Glass Base */
+  --color-surface-elevated: rgba(255, 255, 255, 0.04); /* Frosted Glass Layer */
+  --color-surface-highlight: rgba(255, 255, 255, 0.08);
   
-  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border: rgba(255, 255, 255, 0.08);
   --color-border-subtle: rgba(255, 255, 255, 0.04);
   
-  --color-text-primary: #FFFFFF;
-  --color-text-secondary: #A1A1AA; /* Dimmed Silver */
-  --color-text-tertiary: #71717A;
+  --color-text-primary: #edf6eb; /* Soft Mint White */
+  --color-text-secondary: #a4aea4; /* Muted Slate */
+  --color-text-tertiary: #6f786f;
   
   /* Semantic */
-  --color-error: #FF453A; /* Apple Red */
-  --color-warning: #FF9F0A; /* Apple Orange */
-  --color-success: #34C759; /* Apple Green */
-  --color-info: #0A84FF; /* Apple Blue */
+  --color-error: #ff7351;
+  --color-warning: #ffb300;
+  --color-success: #a9fca0;
+  --color-info: #8ef2ff;
   
-  /* Macros */
-  --macro-carbs: #FF9F0A;
-  --macro-protein: #34C759;
-  --macro-fat: #FF453A;
-  --macro-fiber: #64D2FF;
+  /* Macros (Vibrant) */
+  --macro-carbs: #ffb300;
+  --macro-protein: #a9fca0;
+  --macro-fat: #ff7351;
+  --macro-fiber: #8ef2ff;
   
   /* Geometry */
-  --radius-sm: 8px;
-  --radius-md: 16px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
   --radius-lg: 24px;
   --radius-xl: 32px;
   --radius-pill: 9999px;
   
-  /* Cinematic Shadows & Glows */
-  --shadow-sm: 0 4px 12px rgba(0,0,0,0.5);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.6);
-  --shadow-lg: 0 16px 40px rgba(0,0,0,0.7);
-  --glow-primary: 0 0 20px rgba(52, 199, 89, 0.25);
-  --glow-error: 0 0 20px rgba(255, 69, 58, 0.25);
+  /* Kinetic Shadows & Radiant Glows */
+  --shadow-sm: 0 4px 20px rgba(0,0,0,0.8);
+  --shadow-md: 0 12px 32px rgba(0,0,0,0.9);
+  --glow-primary: 0 0 25px rgba(169, 252, 160, 0.2);
   
-  /* Glass */
-  --blur-md: blur(24px);
+  /* Glassmorphism Logic */
+  --blur-md: blur(20px);
   --blur-lg: blur(40px);
+  --glass-layer: rgba(255, 255, 255, 0.03);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -66,10 +66,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Base Typography */
-h1, h2, h3, h4, h5, h6 {
+/* Base Typography (Editorial) */
+h1, h2, h3 {
+  font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
   letter-spacing: -0.04em;
+  color: var(--color-text-primary);
+}
+
+h4, h5, h6 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--color-text-primary);
 }
 
@@ -98,15 +106,25 @@ img { max-width: 100%; height: auto; display: block; }
   min-height: 100vh;
 }
 
-/* Glass Surface (The core UI block) */
+/* Premium Glass Surface (The Kinetic Layer) */
 .glass-panel {
-  background: var(--color-surface-elevated);
+  background: var(--color-surface-container);
   backdrop-filter: var(--blur-md);
   -webkit-backdrop-filter: var(--blur-md);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
 }
 
 /* Apple/Spotify Pill Button */

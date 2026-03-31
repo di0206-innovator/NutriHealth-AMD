@@ -12,9 +12,9 @@ export default function History({ user }) {
 
   return (
     <main className="history-page page-container" role="main">
-      <header className="page-header">
-        <h1 className="page-title">Meal History</h1>
-        <p className="page-subtitle">Track your nutrition journey</p>
+      <header className="page-header kinetic-header">
+        <h1 className="page-title editorial-title">Your Journey</h1>
+        <p className="page-subtitle greeting-sub">Nutritional Intelligence History</p>
       </header>
 
       {loading && (

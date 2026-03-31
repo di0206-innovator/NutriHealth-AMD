@@ -22,7 +22,8 @@ export default function AnalysisResult({ result, mealType, onReset }) {
       </div>
 
       <div className="calories-hero" aria-label={`Estimated ${calories_estimate} calories`}>
-        <span className="calories-number">{calories_estimate}</span>
+        <h3 className="calories-label">Energy Density</h3>
+        <span className="calories-number" style={{ fontFamily: 'Space Grotesk', fontWeight: 700 }}>{calories_estimate}</span>
         <span className="calories-unit">kcal</span>
       </div>
 

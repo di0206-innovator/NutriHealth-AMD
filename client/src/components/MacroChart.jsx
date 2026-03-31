@@ -37,19 +37,23 @@ export default function MacroChart({ macros }) {
             key={i} 
             d={arc.path} 
             fill={arc.color} 
-            stroke="var(--bg-card)" 
+            stroke="var(--color-surface-container)" 
             strokeWidth="2" 
-            style={{ transition: 'all 0.3s ease' }}
+            style={{ transition: 'all 0.5s var(--ease-kinetic)' }}
             className="macro-arc"
           />
         ))}
+        <text x="50" y="55" textAnchor="middle" className="chart-total-text" 
+          style={{ fill: 'var(--color-text-primary)', fontSize: '10px', fontWeight: 700, fontFamily: 'Space Grotesk' }}>
+          {total}g
+        </text>
       </svg>
       <div className="macro-legend" aria-hidden="true">
         {segments.map((seg, i) => (
           <div key={i} className="macro-legend-item">
             <span className="macro-dot" style={{ background: seg.color, boxShadow: `0 0 8px ${seg.color}` }} />
             <span className="macro-label">{seg.label}</span>
-            <span className="macro-value">{seg.value}g</span>
+            <span className="macro-value" style={{ fontFamily: 'Space Grotesk', fontWeight: 700 }}>{seg.value}g</span>
           </div>
         ))}
       </div>

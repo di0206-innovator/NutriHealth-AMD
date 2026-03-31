@@ -1,0 +1,52 @@
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-line, .skeleton-block, .skeleton-card, .shimmer {
+  background: linear-gradient(90deg, 
+              rgba(255,255,255,0.04) 25%, 
+              rgba(255,255,255,0.1) 50%, 
+              rgba(255,255,255,0.04) 75%);
+  background-size: 200% 100%;
+  border-radius: var(--radius-sm);
+  animation: shimmer 1.5s infinite linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-line, .skeleton-block, .skeleton-card, .shimmer { animation: none; }
+}
+
+.skeleton-line { height: 16px; margin-bottom: 12px; }
+.skeleton-line.wide { width: 80%; }
+.skeleton-line.medium { width: 50%; }
+.skeleton-line.full { width: 100%; }
+.mb-sm { margin-bottom: 8px; }
+
+.skeleton-header { margin-bottom: 24px; }
+.skeleton-card { height: 88px; margin-bottom: 16px; border-radius: var(--radius-lg); padding: 20px; }
+.skeleton-result { padding: 24px; }
+
+.skeleton-app-launch {
+  height: 100vh; display: flex; justify-content: center; align-items: center;
+}
+.skeleton-logo {
+  width: 80px; height: 80px; border-radius: 24px;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.fade-in { animation: fadeIn 0.4s ease forwards; }
+
+.app-loading {
+  position: fixed; inset: 0; background: var(--color-background); z-index: 1000;
+}

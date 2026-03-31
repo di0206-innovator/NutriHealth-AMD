@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* The Void & Neon Palette (Spotify/Apple Health inspired) */
+  --color-primary: #34C759; /* Apple Green */
+  --color-primary-light: #5CE07A;
+  --color-primary-dark: #248A3D;
+  --color-primary-dim: rgba(52, 199, 89, 0.15);
+  
+  --color-background: #000000; /* Pure Black Void */
+  --color-surface: #121212; /* Spotify Dark Grey Surface */
+  --color-surface-elevated: rgba(255, 255, 255, 0.06); /* Frosted Glass Layer */
+  --color-surface-highlight: rgba(255, 255, 255, 0.1);
+  
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border-subtle: rgba(255, 255, 255, 0.04);
+  
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A1A1AA; /* Dimmed Silver */
+  --color-text-tertiary: #71717A;
+  
+  /* Semantic */
+  --color-error: #FF453A; /* Apple Red */
+  --color-warning: #FF9F0A; /* Apple Orange */
+  --color-success: #34C759; /* Apple Green */
+  --color-info: #0A84FF; /* Apple Blue */
+  
+  /* Macros */
+  --macro-carbs: #FF9F0A;
+  --macro-protein: #34C759;
+  --macro-fat: #FF453A;
+  --macro-fiber: #64D2FF;
+  
+  /* Geometry */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 9999px;
+  
+  /* Cinematic Shadows & Glows */
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.5);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.6);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,0.7);
+  --glow-primary: 0 0 20px rgba(52, 199, 89, 0.25);
+  --glow-error: 0 0 20px rgba(255, 69, 58, 0.25);
+  
+  /* Glass */
+  --blur-md: blur(24px);
+  --blur-lg: blur(40px);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { 
+  font-size: 16px; 
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--color-text-primary);
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+a { color: var(--color-text-primary); text-decoration: none; transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); }
+a:hover { color: var(--color-primary); }
+button { cursor: pointer; font-family: inherit; border: none; background: transparent; }
+img { max-width: 100%; height: auto; display: block; }
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+
+/* Structural */
+.page-container {
+  max-width: 600px; /* Mobile-first width like Apple Health */
+  margin: 0 auto;
+  padding: 32px 24px 120px; /* Huge breathing room */
+  min-height: 100vh;
+}
+
+/* Glass Surface (The core UI block) */
+.glass-panel {
+  background: var(--color-surface-elevated);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+/* Apple/Spotify Pill Button */
+.primary-btn {
+  background: var(--color-primary);
+  color: #000000; /* High contrast black text on neon green */
+  border-radius: var(--radius-pill);
+  padding: 16px 32px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-btn:hover {
+  box-shadow: var(--glow-primary);
+  transform: translateY(-2px);
+}
+
+.primary-btn:active {
+  transform: scale(0.96); /* Apple tactile haptic feel */
+  box-shadow: none;
+}
+
+.primary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.secondary-btn {
+  background: var(--color-surface-elevated);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 14px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background: var(--color-surface-highlight);
+}
+
+.secondary-btn:active {
+  transform: scale(0.96);
+}
+
+/* Minimalist Inputs */
+input, select, textarea {
+  width: 100%;
+  background: var(--color-surface-elevated);
+  border: 1px solid transparent;
+  color: var(--color-text-primary);
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  font-size: 1.05rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  background: var(--color-surface-highlight);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-dim);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--color-text-tertiary);
+}
+

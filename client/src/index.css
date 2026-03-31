@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  background-color: #000000;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: #000000;
+}
+

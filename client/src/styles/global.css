@@ -1,53 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* THE VOID & BIOLUMINESCENT PALETTE (Obsidian Vitality) */
-  --color-primary: #a9fca0; /* Neon Mint Growth */
-  --color-primary-light: #c2ffbc;
-  --color-primary-dark: #63b25f;
-  --color-primary-dim: rgba(169, 252, 160, 0.15);
+  /* FOODIE / HEALTH CONSCIOUS OBSIDIAN PALETTE */
+  --color-primary: #34d399; /* Fresh Spearmint (Health) */
+  --color-primary-light: #6ee7b7;
+  --color-primary-dark: #10b981;
+  --color-primary-dim: rgba(52, 211, 153, 0.15);
   
-  --color-background: #08100a; /* Obsidian Void */
-  --color-surface: #08100a;
-  --color-surface-container: #121c14; /* Glass Base */
-  --color-surface-elevated: rgba(255, 255, 255, 0.04); /* Frosted Glass Layer */
-  --color-surface-highlight: rgba(255, 255, 255, 0.08);
+  --color-accent-orange: #fb923c; /* Juicy Citrus */
+  --color-accent-yellow: #facc15; /* Sunkissed Lemon */
+  --color-accent-pink: #f472b6; /* Berry Blush */
+
+  /* Dark Organic Stone Base */
+  --color-background: #0c0a09; /* Deep warm obsidian */
+  --color-surface: #0c0a09;
+  --color-surface-container: #1c1917; /* Elevated stone */
+  --color-surface-elevated: rgba(255, 255, 255, 0.05); /* Premium Frosted */
+  --color-surface-highlight: rgba(255, 255, 255, 0.09);
   
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-subtle: rgba(255, 255, 255, 0.04);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border-subtle: rgba(255, 255, 255, 0.05);
   
-  --color-text-primary: #edf6eb; /* Soft Mint White */
-  --color-text-secondary: #a4aea4; /* Muted Slate */
-  --color-text-tertiary: #6f786f;
+  --color-text-primary: #f8fafc; /* Crisp White */
+  --color-text-secondary: #94a3b8; /* Cool Slate */
+  --color-text-tertiary: #64748b;
   
   /* Semantic */
-  --color-error: #ff7351;
-  --color-warning: #ffb300;
-  --color-success: #a9fca0;
-  --color-info: #8ef2ff;
+  --color-error: #ef4444; /* Tomato Red */
+  --color-warning: #f59e0b;
+  --color-success: #10b981;
+  --color-info: #38bdf8;
   
-  /* Macros (Vibrant) */
-  --macro-carbs: #ffb300;
-  --macro-protein: #a9fca0;
-  --macro-fat: #ff7351;
-  --macro-fiber: #8ef2ff;
+  /* Macros (Vibrant Foodie) */
+  --macro-carbs: #f59e0b; /* Amber */
+  --macro-protein: #ec4899; /* Pink */
+  --macro-fat: #3b82f6; /* Blueish */
+  --macro-fiber: #10b981; /* Green */
   
   /* Geometry */
   --radius-sm: 12px;
-  --radius-md: 18px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
+  --radius-md: 20px;
+  --radius-lg: 32px;
+  --radius-xl: 40px;
   --radius-pill: 9999px;
   
-  /* Kinetic Shadows & Radiant Glows */
-  --shadow-sm: 0 4px 20px rgba(0,0,0,0.8);
-  --shadow-md: 0 12px 32px rgba(0,0,0,0.9);
-  --glow-primary: 0 0 25px rgba(169, 252, 160, 0.2);
+  /* Cinematic Shadows & Glowing */
+  --shadow-sm: 0 8px 30px rgba(0,0,0,0.4);
+  --shadow-md: 0 20px 40px rgba(0,0,0,0.6);
+  --glow-primary: 0 0 35px rgba(52, 211, 153, 0.25);
+  --glow-orange: 0 0 35px rgba(251, 146, 60, 0.25);
   
   /* Glassmorphism Logic */
-  --blur-md: blur(20px);
-  --blur-lg: blur(40px);
-  --glass-layer: rgba(255, 255, 255, 0.03);
+  --blur-md: blur(24px);
+  --blur-lg: blur(48px);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -61,14 +66,15 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background: var(--color-background);
   color: var(--color-text-primary);
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-/* Base Typography (Editorial) */
+/* Premium Typography (Fluid & Editorial) */
 h1, h2, h3 {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-weight: 700;
   letter-spacing: -0.04em;
   color: var(--color-text-primary);
@@ -87,10 +93,10 @@ h4, h5, h6 {
   clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
 
-a { color: var(--color-text-primary); text-decoration: none; transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); }
+a { color: var(--color-text-primary); text-decoration: none; transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
 a:hover { color: var(--color-primary); }
 button { cursor: pointer; font-family: inherit; border: none; background: transparent; }
-img { max-width: 100%; height: auto; display: block; }
+img { max-width: 100%; height: auto; display: block; border-radius: var(--radius-md); }
 
 :focus-visible {
   outline: 2px solid var(--color-primary);
@@ -102,19 +108,20 @@ img { max-width: 100%; height: auto; display: block; }
 .page-container {
   max-width: 600px; /* Mobile-first width like Apple Health */
   margin: 0 auto;
-  padding: 32px 24px 120px; /* Huge breathing room */
+  padding: 40px 24px 140px; /* Deep breathing room */
   min-height: 100vh;
+  position: relative;
+  z-index: 1;
 }
 
-/* Premium Glass Surface (The Kinetic Layer) */
+/* Premium Glass Surface */
 .glass-panel {
   background: var(--color-surface-container);
   backdrop-filter: var(--blur-md);
   -webkit-backdrop-filter: var(--blur-md);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.2s ease;
+  box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
 }
@@ -123,34 +130,45 @@ img { max-width: 100%; height: auto; display: block; }
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 100%);
   pointer-events: none;
 }
 
-/* Apple/Spotify Pill Button */
+/* Fluid Apple/Spotify Buttons */
 .primary-btn {
   background: var(--color-primary);
-  color: #000000; /* High contrast black text on neon green */
+  color: #000;
   border-radius: var(--radius-pill);
-  padding: 16px 32px;
-  font-size: 1.1rem;
+  padding: 18px 36px;
+  font-size: 1.15rem;
+  font-family: 'Outfit', sans-serif;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.01em;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease, box-shadow 0.2s ease;
+  gap: 12px;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease, background 0.2s ease;
+  will-change: transform;
+}
+
+.primary-btn.orange {
+  background: var(--color-accent-orange);
+  box-shadow: var(--glow-orange);
 }
 
 .primary-btn:hover {
   box-shadow: var(--glow-primary);
-  transform: translateY(-2px);
+  transform: translateY(-4px) scale(1.02);
+}
+
+.primary-btn.orange:hover {
+  box-shadow: 0 0 50px rgba(251, 146, 60, 0.4);
 }
 
 .primary-btn:active {
-  transform: scale(0.96); /* Apple tactile haptic feel */
-  box-shadow: none;
+  transform: scale(0.96);
 }
 
 .primary-btn:disabled {
@@ -158,51 +176,90 @@ img { max-width: 100%; height: auto; display: block; }
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+  background: var(--color-surface-elevated);
+  color: var(--color-text-secondary);
 }
 
 .secondary-btn {
-  background: var(--color-surface-elevated);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--color-text-primary);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-pill);
-  padding: 14px 24px;
-  font-size: 1rem;
+  padding: 16px 28px;
+  font-size: 1.05rem;
+  font-family: 'Outfit', sans-serif;
   font-weight: 600;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.2s ease, background 0.2s ease;
+  gap: 10px;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
 }
 
 .secondary-btn:hover {
-  background: var(--color-surface-highlight);
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  border-color: var(--color-border);
 }
 
 .secondary-btn:active {
-  transform: scale(0.96);
+  transform: scale(0.97);
 }
 
-/* Minimalist Inputs */
+/* Minimal Input Architecture */
 input, select, textarea {
   width: 100%;
   background: var(--color-surface-elevated);
-  border: 1px solid transparent;
+  border: 1px solid var(--color-border-subtle);
   color: var(--color-text-primary);
-  padding: 16px 20px;
+  padding: 18px 24px;
   border-radius: var(--radius-md);
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-family: inherit;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 input:focus, select:focus, textarea:focus {
   outline: none;
-  background: var(--color-surface-highlight);
+  background: rgba(255, 255, 255, 0.08);
   border-color: var(--color-primary);
   box-shadow: 0 0 0 4px var(--color-primary-dim);
+  transform: translateY(-2px);
 }
 
 input::placeholder, textarea::placeholder {
   color: var(--color-text-tertiary);
+  font-weight: 500;
 }
 
+/* Dynamic Gradients for Background depth (can put underneath app) */
+.ambient-glow {
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--color-primary-dim) 0%, transparent 70%);
+  top: -100px;
+  left: -200px;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(80px);
+  opacity: 0.8;
+  animation: breathe 10s ease-in-out infinite alternate;
+}
+
+.ambient-glow.orange {
+  background: radial-gradient(circle, rgba(251, 146, 60, 0.1) 0%, transparent 70%);
+  top: auto;
+  bottom: -200px;
+  right: -200px;
+  left: auto;
+  animation-delay: -5s;
+}
+
+@keyframes breathe {
+  0% { transform: scale(1) translate(0, 0); opacity: 0.6; }
+  100% { transform: scale(1.1) translate(20px, 30px); opacity: 0.9; }
+}

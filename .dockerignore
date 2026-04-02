@@ -9,3 +9,7 @@ __pycache__
 .pytest_cache
 .vscode
 .DS_Store
+venv
+server/venv
+.git
+node_modules

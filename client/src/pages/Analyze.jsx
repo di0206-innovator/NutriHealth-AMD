@@ -50,41 +50,65 @@ export default function Analyze({ user, profile }) {
 
 
   const analyzeImage = async (file, profileData) => {
-    // If you have a working python backend, uncomment and use fetch here
-    /*
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('profile', JSON.stringify(profileData));
-    const response = await fetch('http://localhost:8000/api/analyze', { method: 'POST', body: formData });
-    return await response.json();
-    */
-    
-    // Using a smart mock for the production UI presentation
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          foodName: 'Grilled Salmon with Quinoa',
-          confidence: 94,
-          healthScore: 88,
-          healthScoreCategory: 'Excellent',
-          nutritionalInfo: {
-            calories: 420,
-            protein: 35,
-            carbohydrates: 25,
-            fat: 18,
-            fiber: 6,
-            portion: '1 Plate (350g)'
-          },
-          insights: [
-            'Excellent source of Omega-3 fatty acids for heart health.',
-            'High protein content supports your lean & tone goal.'
-          ],
-          alternatives: [
-            'Consider swapping white quinoa for tricolor quinoa for extra antioxidants.'
-          ]
-        });
-      }, 2500);
+    // Convert file to base64 for the API
+    const toBase64 = (f) => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(f);
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
     });
+
+    try {
+      const base64 = await toBase64(file);
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          image_base64: base64,
+          image_mime_type: file.type,
+          meal_type: selectedType,
+          user_profile: {
+            age: profileData.age,
+            gender: profileData.gender,
+            height_cm: profileData.height,
+            weight_kg: profileData.weight,
+            goal: profileData.goal,
+            activity_level: profileData.activityLevel
+          }
+        })
+      });
+      
+      const json = await response.json();
+      if (json.success && json.data) {
+        return json.data;
+      }
+      // If backend returns an error, throw it
+      throw new Error(json.message || 'Analysis failed');
+    } catch (err) {
+      console.warn('Backend API call failed, using demo data:', err.message);
+      // Fallback mock for demo/offline mode
+      return {
+        foodName: 'Grilled Salmon with Quinoa',
+        confidence: 94,
+        healthScore: 88,
+        healthScoreCategory: 'Excellent',
+        nutritionalInfo: {
+          calories: 420,
+          protein: 35,
+          carbohydrates: 25,
+          fat: 18,
+          fiber: 6,
+          portion: '1 Plate (350g)'
+        },
+        insights: [
+          'Excellent source of Omega-3 fatty acids for heart health.',
+          'High protein content supports your lean & tone goal.'
+        ],
+        alternatives: [
+          'Consider swapping white quinoa for tricolor quinoa for extra antioxidants.'
+        ]
+      };
+    }
   };
 
   const processAnalysis = async () => {

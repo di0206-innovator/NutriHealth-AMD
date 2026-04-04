@@ -1,83 +1,84 @@
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { getRecentMeals } from '../firebase';
-import { Clock, TrendingUp } from 'lucide-react';
-import SkeletonLoader from '../components/SkeletonLoader';
+import { Calendar, Search, Filter, Beef, Zap, Clock, ChevronRight, Activity, Flame, TrendingUp } from 'lucide-react';
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
-};
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 25 } }
-};
+export default function History({ meals }) {
+  const groupMealsByDate = (mealList) => {
+    if (!mealList) return {};
+    return mealList.reduce((groups, meal) => {
+      const date = new Date(meal.timestamp).toLocaleDateString('en-US', { 
+        month: 'long', day: 'numeric', year: 'numeric' 
+      });
+      if (!groups[date]) groups[date] = [];
+      groups[date].push(meal);
+      return groups;
+    }, {});
+  };
 
-export default function History({ user }) {
-  const [history, setHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const groupedHistory = groupMealsByDate(meals);
+  const totalCalories = meals.reduce((s, m) => s + (m.calories || 0), 0);
+  const avgProtein = (meals.reduce((s, m) => s + (m.protein || 0), 0) / (meals.length || 1)).toFixed(1);
 
-  useEffect(() => {
-    getRecentMeals(user.uid, 50).then(data => {
-      setHistory(data);
-      setLoading(false);
-    });
-  }, [user]);
-
-  if (loading) return <div style={{ padding: '40px 24px' }}><SkeletonLoader type="history" count={4} /></div>;
+  const containerVariants = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
+  const itemVariants = { hidden: { y: 20, opacity: 0 }, show: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 200, damping: 20 } } };
 
   return (
-    <motion.div initial="hidden" animate="visible" exit={{ opacity: 0 }} variants={containerVariants}>
-      <div className="ambient-glow" style={{ opacity: 0.4 }} />
+    <motion.div variants={containerVariants} initial="hidden" animate="show" style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '100px' }}>
       
-      <motion.header className="home-header" variants={itemVariants}>
-        <span className="greeting-sub" style={{ color: 'var(--color-accent-pink)' }}>Activity Log</span>
-        <h1 className="editorial-title">Your Nutrition<br/>Journey</h1>
-      </motion.header>
-
-      {history.length === 0 ? (
-        <motion.div className="glass-panel" variants={itemVariants} style={{ padding: '40px 24px', textAlign: 'center' }}>
-          <Clock size={48} color="var(--color-text-tertiary)" style={{ margin: '0 auto 16px' }} />
-          <h3 style={{ fontFamily: 'Outfit', fontSize: '1.5rem', marginBottom: '8px' }}>No meals logged yet</h3>
-          <p style={{ color: 'var(--color-text-secondary)' }}>Scan your first meal to start tracking your health score.</p>
-        </motion.div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {history.map(item => (
-            <motion.div key={item.id} className="meal-card" variants={itemVariants}>
-              <div className="meal-card-glass">
-                <div className="meal-card-content">
-                  <div className="meal-info">
-                    <h3 className="meal-name">{item.foodName}</h3>
-                    <div className="meal-meta">
-                      <Clock size={14} /> 
-                      {item.mealType} • {new Date(item.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric'})}
-                    </div>
-                  </div>
-                  
-                  <div className="meal-metrics">
-                    <div className="meal-stats">
-                      <span className="meal-calories">{item.nutritionalInfo?.calories || 0}</span>
-                      <span className="meal-unit">kcal</span>
-                    </div>
-                    
-                    <div className="meal-score-pill" style={{ 
-                      borderColor: item.healthScoreCategory === 'Excellent' ? 'var(--color-success)' : 
-                                  item.healthScoreCategory === 'Good' ? 'var(--color-primary-light)' : 
-                                  item.healthScoreCategory === 'Poor' ? 'var(--color-error)' : 'var(--color-warning)',
-                      color: item.healthScoreCategory === 'Excellent' ? 'var(--color-success)' : 
-                            item.healthScoreCategory === 'Good' ? 'var(--color-primary-light)' : 
-                            item.healthScoreCategory === 'Poor' ? 'var(--color-error)' : 'var(--color-warning)'
-                    }}>
-                      {item.healthScore}
-                    </div>
-                  </div>
-                </div>
+      {/* 1. History Metadata Scroller */}
+      <motion.div variants={itemVariants} style={{ display: 'flex', gap: '12px', overflowX: 'auto', margin: '0 -20px', padding: '0 20px', scrollbarWidth: 'none' }}>
+         {[
+           { label: 'Total Volume', value: `${meals.length} Meals`, icon: <TrendingUp size={14} />, color: 'var(--color-primary)' },
+           { label: 'Avg Protein', value: `${avgProtein}g`, icon: <Zap size={14} />, color: 'var(--color-secondary)' },
+           { label: 'Calories Consumed', value: `${totalCalories} kcal`, icon: <Flame size={14} />, color: '#ff9500' }
+         ].map((stat, i) => (
+           <div key={i} style={{ minWidth: '150px', background: 'white', padding: '16px', borderRadius: '24px', boxShadow: 'var(--shadow-sm)', border: '1px solid rgba(0,0,0,0.02)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: stat.color, marginBottom: '8px' }}>
+                 {stat.icon}
+                 <span style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase' }}>{stat.label}</span>
               </div>
-            </motion.div>
-          ))}
+              <div style={{ fontWeight: 800, fontSize: '1rem' }}>{stat.value}</div>
+           </div>
+         ))}
+      </motion.div>
+
+      <motion.div variants={itemVariants} style={{ display: 'flex', background: 'white', padding: '16px 20px', borderRadius: '24px', alignItems: 'center', gap: '12px', boxShadow: 'var(--shadow-sm)', border: '1px solid rgba(0,0,0,0.03)' }}>
+        <Search size={20} color="var(--color-text-tertiary)" />
+        <input type="text" placeholder="Explore metabolic history..." style={{ background: 'transparent', border: 'none', width: '100%', fontSize: '1rem', fontWeight: 600, color: 'var(--color-text-primary)' }} />
+        <Filter size={18} color="var(--color-primary)" />
+      </motion.div>
+
+      {Object.entries(groupedHistory).map(([date, dateMeals]) => (
+        <div key={date} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingLeft: '8px' }}>
+             <Calendar size={14} color="var(--color-primary)" />
+             <h3 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--color-text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                {date === new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) ? 'TODAY' : date}
+             </h3>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {dateMeals.map((meal) => (
+              <motion.div key={meal.id} variants={itemVariants} whileTap={{ scale: 0.97 }} style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '20px', background: 'white', borderRadius: '28px', boxShadow: 'var(--shadow-sm)', border: '1px solid rgba(0,0,0,0.02)' }}>
+                <div style={{ width: 64, height: 64, borderRadius: '18px', background: meal.health_score >= 8 ? '#ecfdf5' : '#fff7ed', display: 'flex', alignItems: 'center', justifyContent: 'center', color: meal.health_score >= 8 ? '#34c759' : '#ff9500' }}>
+                   {meal.health_score >= 8 ? <Activity size={28} /> : <Flame size={28} />}
+                </div>
+                <div style={{ flex: 1 }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <h4 style={{ fontSize: '1.1rem', fontWeight: 800 }}>{meal.name}</h4>
+                      <div style={{ padding: '4px 10px', background: 'var(--color-surface-bg)', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 900, color: 'var(--color-primary)' }}>{meal.health_score}/10</div>
+                   </div>
+                   <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--color-text-tertiary)', fontWeight: 700 }}><Zap size={14} color="var(--color-secondary)" /> {meal.protein}g P</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--color-text-tertiary)', fontWeight: 700 }}><Clock size={14} /> {new Date(meal.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--color-text-tertiary)', fontWeight: 700 }}><Flame size={14} color="var(--color-primary)" /> {meal.calories} kcal</div>
+                   </div>
+                </div>
+                <ChevronRight size={20} color="var(--color-border)" />
+              </motion.div>
+            ))}
+          </div>
         </div>
-      )}
+      ))}
     </motion.div>
   );
 }

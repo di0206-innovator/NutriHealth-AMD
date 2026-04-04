@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field
+import re
+from pydantic import BaseModel, Field, validator
 from typing import Optional, List
 
 class UserProfile(BaseModel):
@@ -11,13 +12,32 @@ class AnalyzeRequest(BaseModel):
     image_base64: Optional[str] = None
     image_mime_type: Optional[str] = "image/jpeg"
     user_profile: Optional[UserProfile] = None
-    meal_type: Optional[str] = "meal"  # breakfast|lunch|dinner|snack
+    meal_type: Optional[str] = "meal"
+
+    @validator('meal_text')
+    def sanitize_meal_text(cls, v):
+        if v is None: return v
+        v = v.strip()
+        if len(v) > 500: raise ValueError('Meal description too long')
+        injection_patterns = [r'ignore previous', r'system:', r'assistant:']
+        for pattern in injection_patterns:
+            if re.search(pattern, v, re.IGNORECASE): raise ValueError('Invalid input detected')
+        return v
 
 class MacroBreakdown(BaseModel):
     carbs_g: float
     protein_g: float
     fat_g: float
     fiber_g: Optional[float] = 0
+    # Snippet: Clinical markers
+    sodium_mg: Optional[float] = 0
+    sugar_g: Optional[float] = 0
+    glycemic_load: Optional[float] = 0
+
+class IngredientDetail(BaseModel):
+    name: str
+    health_impact: str
+    reason: str
 
 class AnalyzeResponse(BaseModel):
     food_name: str
@@ -28,6 +48,7 @@ class AnalyzeResponse(BaseModel):
     healthier_alternatives: List[str] = Field(..., max_items=3)
     personalized_advice: str
     portion_note: Optional[str] = None
+    top_ingredients: List[IngredientDetail] = Field(default_factory=list)
 
 class ErrorResponse(BaseModel):
     error: str

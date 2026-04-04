@@ -1,113 +1,121 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { 
-  getFirestore, doc, setDoc, getDoc, collection, addDoc, 
-  query, orderBy, limit, getDocs, where, Timestamp
+  getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, 
+  addDoc, serverTimestamp, orderBy, limit, writeBatch, increment, Timestamp,
+  getAggregateFromServer, sum, average, count
 } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "MOCK_KEY_FOR_UI_VERIFICATION",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "nutrilens-mock.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "nutrilens-704404815769",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "nutrilens-mock.appspot.com",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "000000000000",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:000000000000:web:mock"
 };
 
-let app, auth, db;
-let isDemoMode = false;
-
+// Defensive Initialization
+let app;
 try {
-  if (!firebaseConfig.apiKey) throw new Error("Missing Firebase API Key");
   app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
 } catch (error) {
-  console.warn('Firebase initialization failed. Running in Demo Mode.', error.message);
-  isDemoMode = true;
+  console.error("Metabolic Ecosystem Sync Failed:", error);
+  app = {}; 
 }
 
-// In-Memory Storage for Demo Mode
-const demoState = {
-  profile: null,
-  meals: []
-};
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export { onAuthStateChanged };
 
-// Auth helpers
-export const signInAnon = async () => {
-  if (isDemoMode) return { user: { uid: 'demo-user-123' } };
-  return signInAnonymously(auth);
-};
+const googleProvider = new GoogleAuthProvider();
 
-export const onAuth = (callback) => {
-  if (isDemoMode) {
-    setTimeout(() => callback({ uid: 'demo-user-123' }), 500); // Simulate network delay
-    return () => {}; // Mock unsubscribe
-  }
-  return onAuthStateChanged(auth, callback);
-};
+// AUTH ACTIONS
+export const loginWithGoogle = () => signInWithPopup(auth, googleProvider);
+export const loginWithEmail = (email, password) => signInWithEmailAndPassword(auth, email, password);
+export const registerWithEmail = (email, password) => createUserWithEmailAndPassword(auth, email, password);
+export const logoutUser = () => signOut(auth);
 
-// Profile helpers
-export const saveUserProfile = async (uid, profile) => {
-  if (isDemoMode) {
-    demoState.profile = { ...profile, updatedAt: new Date() };
-    return;
-  }
-  await setDoc(doc(db, 'users', uid, 'data', 'profile'), {
-    ...profile,
-    updatedAt: Timestamp.now()
-  });
+// USER PROFILE ACTIONS
+export const saveUserProfile = async (uid, profileData) => {
+  const userRef = doc(db, 'users', uid);
+  await setDoc(userRef, { ...profileData, onboarded: true, updatedAt: serverTimestamp() }, { merge: true });
 };
 
 export const getUserProfile = async (uid) => {
-  if (isDemoMode) {
-    return demoState.profile;
-  }
-  const snap = await getDoc(doc(db, 'users', uid, 'data', 'profile'));
+  const userRef = doc(db, 'users', uid);
+  const snap = await getDoc(userRef);
   return snap.exists() ? snap.data() : null;
 };
 
-// Meal helpers
-export const saveMeal = async (uid, mealData) => {
-  if (isDemoMode) {
-    const newMeal = { id: Date.now().toString(), ...mealData, timestamp: new Date() };
-    demoState.meals.push(newMeal);
-    return { id: newMeal.id };
-  }
-  const mealsRef = collection(db, 'users', uid, 'meals');
-  return await addDoc(mealsRef, {
-    ...mealData,
-    timestamp: Timestamp.now()
-  });
+// Snippet 6: Firestore batch writes for atomic meal save + daily stat update
+export const saveMealWithStats = async (uid, mealData) => {
+  const batch = writeBatch(db);
+  
+  // Write the meal in subcollection (Snippet 1/5 style)
+  const mealRef = doc(collection(db, 'users', uid, 'meals'));
+  batch.set(mealRef, { ...mealData, timestamp: serverTimestamp() });
+  
+  // Update daily aggregate atomically
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  const statsRef = doc(db, 'users', uid, 'stats', today);
+  batch.set(statsRef, {
+    total_meals: increment(1),
+    total_calories: increment(mealData.calories || 0),
+    score_sum: increment(mealData.health_score || 0),
+    date: today
+  }, { merge: true });
+  
+  await batch.commit(); // Atomic — both succeed or neither does
+  return mealRef.id;
 };
 
-export const getRecentMeals = async (uid, limitCount = 10) => {
-  if (isDemoMode) {
-    return [...demoState.meals].reverse().slice(0, limitCount);
-  }
-  const q = query(
-    collection(db, 'users', uid, 'meals'),
-    orderBy('timestamp', 'desc'),
-    limit(limitCount)
-  );
-  const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-};
-
-export const getTodayMeals = async (uid) => {
-  if (isDemoMode) {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-    return demoState.meals.filter(m => m.timestamp >= startOfDay).reverse();
-  }
+// Snippet 7: Cloud Firestore aggregate stats (Server-side aggregation)
+export const getMealAggregates = async (uid) => {
   const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
+  startOfDay.setHours(0,0,0,0);
   
   const q = query(
     collection(db, 'users', uid, 'meals'),
-    where('timestamp', '>=', Timestamp.fromDate(startOfDay)),
-    orderBy('timestamp', 'desc')
+    where('timestamp', '>=', Timestamp.fromDate(startOfDay))
   );
-  const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  
+  try {
+    const snapshot = await getAggregateFromServer(q, {
+        totalMeals: count(),
+        totalCalories: sum('calories'),
+        avgScore: average('health_score')
+    });
+    
+    const data = snapshot.data();
+    return {
+        meals: data.totalMeals,
+        calories: Math.round(data.totalCalories || 0),
+        avgScore: Math.round(data.avgScore || 0)
+    };
+  } catch (e) {
+      console.error("Aggregation Failed:", e);
+      return { meals: 0, calories: 0, avgScore: 0 };
+  }
 };
+
+// Snippet 19: Retrieval of daily aggregates for streak intelligence
+export const getDailyStats = async (uid, daysCount = 30) => {
+  const stats = {};
+  const statsRef = collection(db, 'users', uid, 'stats');
+  const q = query(statsRef, orderBy('date', 'desc'), limit(daysCount));
+  
+  try {
+    const snap = await getDocs(q);
+    snap.forEach(doc => {
+      stats[doc.id] = doc.data();
+    });
+    return stats;
+  } catch (e) {
+    console.error("Streak Bio-Analysis Interrupted:", e);
+    return {};
+  }
+};
+
+// Legacy support for top-level collection if needed (not recommended)
+export const saveMeal = (uid, mealData) => saveMealWithStats(uid, mealData);

@@ -1,60 +1,37 @@
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+/* Snippet 12: Reduced motion support — wrap EVERY animation */
+
+@keyframes pulse-primary {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-.skeleton-container {
-  position: relative;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: var(--radius-md);
+.pulse-animation {
+  animation: pulse-primary 2s infinite ease-in-out;
 }
 
-.skeleton-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0,
-    rgba(255, 255, 255, 0.04) 20%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(255, 255, 255, 0.04) 80%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  animation: shimmer 2s infinite cubic-bezier(0.4, 0.0, 0.2, 1);
-}
-
-/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-  .skeleton-container::after { animation: none; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .pulse-animation {
+    animation: none !important;
+  }
 }
 
-.skeleton-line { height: 18px; margin-bottom: 16px; border-radius: var(--radius-sm); }
-.skeleton-line.title { height: 48px; width: 60%; margin-bottom: 24px; border-radius: var(--radius-md); }
-.skeleton-line.subtitle { height: 24px; width: 40%; }
-.skeleton-block { height: 240px; border-radius: var(--radius-xl); margin-bottom: 40px; }
-.skeleton-card { height: 120px; border-radius: var(--radius-xl); margin-bottom: 20px; }
-
-/* Global Loading State */
-.app-loading {
-  position: fixed; inset: 0; background: var(--color-background); z-index: 1000;
-  display: flex; justify-content: center; align-items: center;
+/* Glassmorphism utility for ingredients */
+.ingredient-row {
+    transition: all 0.3s ease;
 }
 
-.loading-spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.ingredient-row.positive {
+    background: rgba(52, 199, 89, 0.05);
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+.ingredient-row.negative {
+    background: rgba(255, 59, 48, 0.05);
 }
